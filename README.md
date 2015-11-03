@@ -13,7 +13,7 @@ A `variantName` can be passed in as a `prop` to:
 
 ## Goals
 
-- [x] Allows a developer to *variantify* as little or as much as they want. You are not forced to do masses of overriding when you only want to change one thing.
+- [x] Allows a developer to *variantify* as little or as much as they want. You are not forced to do masses of overriding when you only want to change one thing (e.g. the `ArticleHeader` is swapped, but the rest is vanilla).
 - [x] Allows variants with radically-different HTML to co-exist.
 - [x] Separation of styling concerns using variant-specific classes. Attempts to avoid styling clashes.  
 - [x] A common interface to describe variants and to enable easy switching between them using a property. Useful in future for A/B testing.
@@ -93,7 +93,7 @@ export default variantify(defaults, variantInnerComponents)(ArticleTemplate);
 
 Create an `index.css` like so, and import it in your `App`'s styling:
 ```css
-.variant-name-ArticleTemplate--container {
+.variant-name-article-template__container {
   // ...
 }
 ```
