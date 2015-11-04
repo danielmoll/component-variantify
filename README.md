@@ -6,7 +6,7 @@ A higher-order component that offers a common way of creating component variants
 Its purpose is to help wrap generalised components when specialised styling,
 structure, content or behaviour are required.
 
-A `variantName` can be passed in as a `prop` to:
+A `variantName` can be passed in as a `prop`, like so `<VariedComponent variantName="look-or-feel-id" />`, to:
 
 1. Prefix the class name of the component it wraps
 2. Alter the inner components of the component it wraps
