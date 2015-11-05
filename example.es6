@@ -35,7 +35,7 @@ class ComposedComponent extends React.Component {
 
 }
 
-const defaults = {
+const config = {
   defaultVariant: 'basic',
   variants: {
     'basic': {
@@ -56,7 +56,7 @@ const defaults = {
     },
   },
 };
-const VariantSwitcherComponent = variantify(defaults)(ComposedComponent);
+const VariantSwitcherComponent = variantify(config)(ComposedComponent);
 export default (
   <div>
     <VariantSwitcherComponent

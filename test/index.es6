@@ -56,16 +56,15 @@ describe('variantify', () => {
             }
           }
 
-          const variantNameComponents = {
-            'variant-not-matched': {
-              'ArticleHeader': 'component-goes-here',
+          const config = {
+            defaultVariant: 'default-variant',
+            variants: {
+              'variant-not-matched': {
+                'ArticleHeader': 'component-goes-here',
+              },
             },
           };
-          const defaultVariant = 'default-variant';
-          const VariantComponent = withVariedInnerComponents(
-            variantNameComponents,
-            defaultVariant
-          )(ComposedComponent);
+          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
           renderer.render(<VariantComponent variantName="default-variant" />);
           const renderOutput = renderer.getRenderOutput();
           renderOutput.type.should.equal(ComposedComponent);
@@ -93,16 +92,15 @@ describe('variantify', () => {
             }
           }
 
-          const variantNameComponents = {
-            'variant-not-matched': {
-              'ArticleHeader': 'component-goes-here',
+          const config = {
+            defaultVariant: 'default-variant',
+            variants: {
+              'variant-not-matched': {
+                'ArticleHeader': 'component-goes-here',
+              },
             },
           };
-          const defaultVariant = 'default-variant';
-          const VariantComponent = withVariedInnerComponents(
-            variantNameComponents,
-            defaultVariant
-          )(ComposedComponent);
+          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
           renderer.render(<VariantComponent variantName="default-variant" />);
           const renderOutput = renderer.getRenderOutput();
           renderOutput.type.should.equal(ComposedComponent);
@@ -120,24 +118,23 @@ describe('variantify', () => {
             }
           }
 
-          const variantNameComponents = {
-            'default-variant': {
-              'ArticleHeader': 'component-goes-here',
-            },
-            'picked-variant': {
-              'ArticleHeader': 'picked-component',
+          const config = {
+            defaultVariant: 'default-variant',
+            variants: {
+              'default-variant': {
+                'ArticleHeader': 'component-goes-here',
+              },
+              'picked-variant': {
+                'ArticleHeader': 'picked-component',
+              },
             },
           };
-          const defaultVariant = 'default-variant';
           const variantName = 'picked-variant';
-          const VariantComponent = withVariedInnerComponents(
-            variantNameComponents,
-            defaultVariant
-          )(ComposedComponent);
+          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
           renderer.render(<VariantComponent variantName={variantName} />);
           const renderOutput = renderer.getRenderOutput();
           renderOutput.type.should.equal(ComposedComponent);
-          renderOutput.props.components.should.deep.equal(variantNameComponents[variantName]);
+          renderOutput.props.components.should.deep.equal(config.variants[variantName]);
         });
 
       });
@@ -151,20 +148,19 @@ describe('variantify', () => {
             }
           }
 
-          const variantNameComponents = {
-            'default-variant': {
-              'ArticleHeader': 'component-goes-here',
+          const config = {
+            defaultVariant: 'default-variant',
+            variants: {
+              'default-variant': {
+                'ArticleHeader': 'component-goes-here',
+              },
             },
           };
-          const defaultVariant = 'default-variant';
-          const VariantComponent = withVariedInnerComponents(
-            variantNameComponents,
-            defaultVariant
-          )(ComposedComponent);
+          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
           renderer.render(<VariantComponent variantName="does-not-match" />);
           const renderOutput = renderer.getRenderOutput();
           renderOutput.type.should.equal(ComposedComponent);
-          renderOutput.props.components.should.deep.equal(variantNameComponents[defaultVariant]);
+          renderOutput.props.components.should.deep.equal(config.variants[config.defaultVariant]);
         });
 
       });
@@ -188,11 +184,12 @@ describe('variantify', () => {
             return <div>Hello there <span>fellow developer</span>.</div>;
           }
         }
-
-        const VariantComponent = withVariantClassNameList({
-          variants: [ 'variant-a', 'variant-b', 'variant-c' ],
+        const config = {
           defaultVariant: 'variant-a',
-        })(ComposedComponent);
+          availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
+        };
+
+        const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
         renderer.render(<VariantComponent variantName="variant-a" />);
         const renderOutput = renderer.getRenderOutput();
         renderOutput.type.should.equal(ComposedComponent);
@@ -207,11 +204,12 @@ describe('variantify', () => {
               return <div>Hello there <span>fellow developer</span>.</div>;
             }
           }
-
-          const VariantComponent = withVariantClassNameList({
-            variants: [ 'variant-a', 'variant-b', 'variant-c' ],
+          const config = {
             defaultVariant: 'variant-a',
-          })(ComposedComponent);
+            availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
+          };
+
+          const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
           renderer.render(<VariantComponent variantName="variant-a" />);
           const renderOutput = renderer.getRenderOutput();
           const generateClassNameList = renderOutput.props.generateClassNameList;
@@ -224,11 +222,12 @@ describe('variantify', () => {
               return <div>Hello there <span>fellow developer</span>.</div>;
             }
           }
-
-          const VariantComponent = withVariantClassNameList({
-            variants: [ 'variant-a', 'variant-b', 'variant-c' ],
+          const config = {
             defaultVariant: 'variant-a',
-          })(ComposedComponent);
+            availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
+          };
+
+          const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
           renderer.render(<VariantComponent variantName="variant-a" />);
           const renderOutput = renderer.getRenderOutput();
           const generateClassNameList = renderOutput.props.generateClassNameList;
@@ -241,11 +240,12 @@ describe('variantify', () => {
               return <div>Hello there <span>fellow developer</span>.</div>;
             }
           }
-
-          const VariantComponent = withVariantClassNameList({
-            variants: [ 'variant-a', 'variant-b', 'variant-c' ],
+          const config = {
             defaultVariant: null,
-          })(ComposedComponent);
+            availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
+          };
+
+          const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
           renderer.render(<VariantComponent />);
           const renderOutput = renderer.getRenderOutput();
           const generateClassNameList = renderOutput.props.generateClassNameList;

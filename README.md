@@ -65,7 +65,7 @@ import {
   OtherVariantFooter,
 } from './other-variant-items';
 
-const defaults = {
+const config = {
   defaultVariant: 'variant-name',
   variants: {
     'variant-name': {
@@ -83,7 +83,7 @@ const defaults = {
   },
 };
 
-export default variantify(defaults)(ArticleTemplate);
+export default variantify(config)(ArticleTemplate);
 ```
 
 Create an `index.css` like so, and import it in your `App`'s styling:

@@ -24,12 +24,12 @@ export function withVariedInnerComponents({ variants = {}, defaultVariant }) {
   };
 }
 
-export function withVariantClassNameList({ variants = {}, defaultVariant }) {
+export function withVariantClassNameList({ variantsAvailable = [], defaultVariant }) {
   return (ComposedComponent) => class WithVariantClassNameListComponent extends Component {
 
     static get propTypes() {
       return {
-        variantName: PropTypes.oneOf(Object.keys(variants)),
+        variantName: PropTypes.oneOf(variantsAvailable),
       };
     }
 
@@ -63,9 +63,12 @@ export function withVariantClassNameList({ variants = {}, defaultVariant }) {
   };
 }
 
-export default function variantify(defaults = {}) {
+export default function variantify(config = {}) {
   return compose(
-    withVariedInnerComponents(defaults),
-    withVariantClassNameList(defaults)
+    withVariedInnerComponents(config),
+    withVariantClassNameList({
+      defaultVariant: config.defaultVariant,
+      variantsAvailable: Object.keys(config.variants),
+    })
   );
 }
