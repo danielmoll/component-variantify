@@ -36,35 +36,34 @@ class ComposedComponent extends React.Component {
 }
 
 const defaults = {
-  variants: [ 'basic', 'extended' ],
   defaultVariant: 'basic',
-};
-const variantInnerComponents = {
-  'basic': {
-    'Information': ({ title, director }) => (
-      <div>
-        <h1>{title} by {director}</h1>
-      </div>
-    ),
+  variants: {
+    'basic': {
+      'Information': ({ title, director }) => (
+        <div>
+          <h1>{title} by {director}</h1>
+        </div>
+      ),
+    },
+    'extended': {
+      'Information': ({ title, director, synopsis, rating }) => (
+        <ul>
+          <li><strong>{title}</strong> ({rating})</li>
+          <li>Director: {director}</li>
+          <li>Synopsis: {synopsis}</li>
+        </ul>
+      ),
+    },
   },
-  'extended': {
-    'Information': ({ title, director, synopsis, rating }) => (
-      <ul>
-        <li><strong>{title}</strong> ({rating})</li>
-        <li>Director: {director}</li>
-        <li>Synopsis: {synopsis}</li>
-      </ul>
-    ),
-  },
 };
-const VariantComponent = variantify(defaults, variantInnerComponents)(ComposedComponent);
+const VariantSwitcherComponent = variantify(defaults)(ComposedComponent);
 export default (
   <div>
-    <VariantComponent
+    <VariantSwitcherComponent
       title="E.T."
       director="Steven Spielberg"
     />
-    <VariantComponent
+    <VariantSwitcherComponent
       variantName="extended"
       title="Trust"
       director="Hal Hartley"

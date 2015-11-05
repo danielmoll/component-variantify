@@ -3,7 +3,7 @@ import compose from 'lodash.compose';
 
 export const defaultGenerateClassNameList = (defaultClassName) => [ defaultClassName ];
 
-export function withVariedInnerComponents(variantNameComponents = {}, defaultVariant) {
+export function withVariedInnerComponents({ variants = {}, defaultVariant }) {
   return (ComposedComponent) => class WithVariedInnerComponents extends Component {
     render() {
       const { variantName, ...remainingProps } = this.props;
@@ -11,7 +11,7 @@ export function withVariedInnerComponents(variantNameComponents = {}, defaultVar
       // otherwise just pass the remainingProps and variantName.
       const components = Object.assign(
         (ComposedComponent.defaultProps || {}).components || {},
-        variantNameComponents[variantName] || variantNameComponents[defaultVariant] || {}
+        variants[variantName] || variants[defaultVariant] || {}
       );
       return (
         <ComposedComponent
@@ -24,12 +24,12 @@ export function withVariedInnerComponents(variantNameComponents = {}, defaultVar
   };
 }
 
-export function withVariantClassNameList({ variants = [], defaultVariant }) {
+export function withVariantClassNameList({ variants = {}, defaultVariant }) {
   return (ComposedComponent) => class WithVariantClassNameListComponent extends Component {
 
     static get propTypes() {
       return {
-        variantName: PropTypes.oneOf(variants),
+        variantName: PropTypes.oneOf(Object.keys(variants)),
       };
     }
 
@@ -63,9 +63,9 @@ export function withVariantClassNameList({ variants = [], defaultVariant }) {
   };
 }
 
-export default function variantify(defaults = {}, variantNameComponents = {}) {
+export default function variantify(defaults = {}) {
   return compose(
-    withVariedInnerComponents(variantNameComponents, defaults.defaultVariant),
+    withVariedInnerComponents(defaults),
     withVariantClassNameList(defaults)
   );
 }

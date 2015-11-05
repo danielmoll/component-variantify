@@ -67,28 +67,23 @@ import {
 
 const defaults = {
   defaultVariant: 'variant-name',
-  variants: [
-    'variant-name',
-    'other-variant-name',
-  ],
-};
-
-const variantInnerComponents = {
-  'variant-name': {
-    ArticleHeader: VariantHeader,
-    ArticleSubheader: VariantSubheader,
-    ArticleBody: VariantBody,
-    ArticleFooter: VariantFooter,
-  },
-  'other-variant-name': {
-    ArticleHeader: OtherVariantHeader,
-    ArticleSubheader: OtherVariantSubheader,
-    ArticleBody: OtherVariantBody,
-    ArticleFooter: OtherVariantFooter,
+  variants: {
+    'variant-name': {
+      ArticleHeader: VariantHeader,
+      ArticleSubheader: VariantSubheader,
+      ArticleBody: VariantBody,
+      ArticleFooter: VariantFooter,
+    },
+    'other-variant-name': {
+      ArticleHeader: OtherVariantHeader,
+      ArticleSubheader: OtherVariantSubheader,
+      ArticleBody: OtherVariantBody,
+      ArticleFooter: OtherVariantFooter,
+    },
   },
 };
 
-export default variantify(defaults, variantInnerComponents)(ArticleTemplate);
+export default variantify(defaults)(ArticleTemplate);
 ```
 
 Create an `index.css` like so, and import it in your `App`'s styling:
