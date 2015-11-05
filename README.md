@@ -17,13 +17,13 @@ structure, content or behaviour are required.
 
 ```javascript
 import { createVariant } from '@economist/component-variantify';
-import ArticleBodyComponent from './body';
+import ArticleBodyTemplate from './body';
 import TabView from '@economist/component-tabview';
 
 const WorldIfArticleBody = createVariant({
   Blockquote: 'blockquote',
   TabView: TabView,
-}, 'world-if')(ArticleTemplate);
+}, 'world-if')(ArticleBodyTemplate);
 
 const data = {};
 return (
