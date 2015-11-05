@@ -6,7 +6,7 @@ A higher-order component that offers a common way of creating component variants
 Its purpose is to help wrap generalised components when specialised styling,
 structure, content or behaviour are required.
 
-A `variantName` can be passed in as a `prop`, like so `<VariedComponent variantName="look-or-feel-id" />`, to:
+A `variantName` can be passed in as a `prop`, like so `<VariantComponentSwitcher variantName="look-or-feel-id" />`, to:
 
 1. Prefix the class name of the component it wraps
 2. Alter the inner components of the component it wraps
@@ -20,10 +20,11 @@ A `variantName` can be passed in as a `prop`, like so `<VariedComponent variantN
 
 ## Design
 
-`variantify` is a composition of `withVariedInnerComponents` and `withVariantClassNameList`.
+`createVariantSwitcher` calls `withSwitchableInnerComponents`
 
-`withVariedInnerComponents` allows a developer to declaratively specify the
-components that are composed by the wrapped component.
+`withSwitchableInnerComponents` allows a developer to declaratively switch between the components that are composed by the wrapped component. It calls `createVariant` behind the scenes.
+
+`createVariant` creates a component with some injected `components` and also uses `withVariantClassNameList` against the component that it composes.
 
 `withVariantClassNameList` gives a developer a helper function
 `generateClassNameList` that will generate additional variant classes when
@@ -31,7 +32,22 @@ passed a class name.
 
 ## Usage
 
-[See `example.es6` for usage instructions.](./example.es6)
+```javascript
+import { createVariant } from '@economist/component-variantify';
+import ArticleBodyComponent from './body';
+
+const WorldIfArticleBody = createVariant({
+  Blockquote: 'blockquote',
+}, 'world-if');
+
+const data = {};
+return (
+  <WorldIfArticleBody {...data} />
+)
+```
+
+[See `example.es6` for further usage instructions.](./example.es6)
+
 
 ## Install
 
@@ -49,7 +65,9 @@ npm test;
 
 Create an `index.es6` like so:
 ```javascript
-import variantify from '@economist/component-variantify';
+import createVariantSwitcher from '@economist/component-variantify';
+// The ArticleTemplate must have a `components`
+// prop that is used to render its elements.
 import ArticleTemplate from '@economist/component-articletemplate';
 
 import {
@@ -83,7 +101,7 @@ const config = {
   },
 };
 
-export default variantify(config)(ArticleTemplate);
+export default createVariantSwitcher(config)(ArticleTemplate);
 ```
 
 Create an `index.css` like so, and import it in your `App`'s styling:

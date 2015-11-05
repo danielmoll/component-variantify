@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import variantify, { defaultGenerateClassNameList } from '.';
+import createVariantSwitcher, { defaultGenerateClassNameList } from '.';
 
 const isComponent = PropTypes.oneOfType([ PropTypes.func, PropTypes.string ]);
 class ComposedComponent extends React.Component {
@@ -56,7 +56,7 @@ const config = {
     },
   },
 };
-const VariantSwitcherComponent = variantify(config)(ComposedComponent);
+const VariantSwitcherComponent = createVariantSwitcher(config)(ComposedComponent);
 export default (
   <div>
     <VariantSwitcherComponent

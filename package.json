@@ -130,7 +130,6 @@
     "watch": "parallelshell 'npm run doc:watch' 'npm run prepublish:watch' 'npm run serve'"
   },
   "dependencies": {
-    "lodash.compose": "^2.4.1",
     "react": "^0.14.2"
   },
   "devDependencies": {
@@ -158,13 +157,13 @@
     "npm-watch": "0.0.1",
     "parallelshell": "^2.0.0",
     "pre-commit": "^1.0.10",
-    "react": "^0.14.0",
+    "react": "^0.14.2",
     "react-addons-test-utils": "^0.14.2",
     "react-dom": "^0.14.2",
     "watchify": "^3.4.0"
   },
   "peerDependencies": {
-    "react": "^0.14.0"
+    "react": "^0.14.2"
   },
   "keywords": [
     "bem",

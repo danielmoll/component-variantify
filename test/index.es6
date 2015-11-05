@@ -2,10 +2,11 @@
 import React from 'react';
 import { createRenderer } from 'react-addons-test-utils';
 
-import variantify from '..';
+import createVariantSwitcher from '..';
 import {
+  createVariant,
   defaultGenerateClassNameList,
-  withVariedInnerComponents,
+  withSwitchableInnerComponents,
   withVariantClassNameList,
 } from '..';
 
@@ -13,16 +14,20 @@ import chai from 'chai';
 const should = chai.should();
 describe('variantify', () => {
 
-  it('the composition of the HOCs should be exposed as default', () => {
-    should.exist(variantify);
+  it('createVariantSwitcher should be exposed as default', () => {
+    should.exist(createVariantSwitcher);
+  });
+
+  it('createVariant should be exposed as default', () => {
+    should.exist(createVariant);
   });
 
   it('has defaultGenerateClassNameList exposed', () => {
     should.exist(defaultGenerateClassNameList);
   });
 
-  it('has withVariedInnerComponents exposed', () => {
-    should.exist(withVariedInnerComponents);
+  it('has withSwitchableInnerComponents exposed', () => {
+    should.exist(withSwitchableInnerComponents);
   });
 
   it('has withVariantClassNameList exposed', () => {
@@ -38,7 +43,7 @@ describe('variantify', () => {
 
   });
 
-  describe('withVariedInnerComponents', () => {
+  describe('createVariant', () => {
 
     describe('props.components', () => {
 
@@ -47,7 +52,7 @@ describe('variantify', () => {
         renderer = createRenderer();
       });
 
-      describe('with no components in composed component\'s defaultProps and no matching variantNameComponents', () => {
+      describe('with no components in composed component\'s defaultProps and innerComponents', () => {
 
         it('should pass in an empty object', () => {
           class ComposedComponent extends React.Component {
@@ -58,31 +63,27 @@ describe('variantify', () => {
 
           const config = {
             defaultVariant: 'default-variant',
-            variants: {
-              'variant-not-matched': {
-                'ArticleHeader': 'component-goes-here',
-              },
+            innerComponents: {
+              'ArticleHeader': 'component-goes-here',
             },
           };
-          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
-          renderer.render(<VariantComponent variantName="default-variant" />);
+          const VariantComponent = createVariant(config.innerComponents, config.defaultVariant)(ComposedComponent);
+          renderer.render(<VariantComponent />);
           const renderOutput = renderer.getRenderOutput();
-          renderOutput.type.should.equal(ComposedComponent);
-          renderOutput.props.components.should.deep.equal({});
+          renderOutput.type.name.should.equal('WithVariantClassNameListComponent');
+          renderOutput.props.components.should.deep.equal(config.innerComponents);
         });
 
       });
 
-      describe('with components in composed component\'s defaultProps and no matching variantName or default', () => {
+      describe('with components in composed component\'s defaultProps and no innerComponents passed in', () => {
 
         it('should pass in the defaultProps components', () => {
           class ComposedComponent extends React.Component {
             static get defaultProps() {
               return {
                 'components': {
-                  'default-variant': {
-                    'ArticleHeader': 'component-found-here',
-                  },
+                  'ArticleHeader': 'component-found-here',
                 },
               };
             }
@@ -94,25 +95,29 @@ describe('variantify', () => {
 
           const config = {
             defaultVariant: 'default-variant',
-            variants: {
-              'variant-not-matched': {
-                'ArticleHeader': 'component-goes-here',
-              },
-            },
+            innerComponents: {},
           };
-          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
-          renderer.render(<VariantComponent variantName="default-variant" />);
+          const VariantComponent = createVariant(config.innerComponents, config.defaultVariant)(ComposedComponent);
+          renderer.render(<VariantComponent />);
           const renderOutput = renderer.getRenderOutput();
-          renderOutput.type.should.equal(ComposedComponent);
+          renderOutput.type.name.should.equal('WithVariantClassNameListComponent');
           renderOutput.props.components.should.deep.equal(ComposedComponent.defaultProps.components);
         });
 
       });
 
-      describe('with no components in composed component\'s defaultProps and matching variantName', () => {
+      describe('with components in composed component\'s defaultProps and innerComponents', () => {
 
         it('should pass in the matching variantNameComponents object', () => {
           class ComposedComponent extends React.Component {
+            static get defaultProps() {
+              return {
+                'components': {
+                  'ArticleBody': 'component-found-here',
+                },
+              };
+            }
+
             render() {
               return <div>Hello there <span>fellow developer</span>.</div>;
             }
@@ -120,47 +125,18 @@ describe('variantify', () => {
 
           const config = {
             defaultVariant: 'default-variant',
-            variants: {
-              'default-variant': {
-                'ArticleHeader': 'component-goes-here',
-              },
-              'picked-variant': {
-                'ArticleHeader': 'picked-component',
-              },
+            innerComponents: {
+              'ArticleHeader': 'picked-component',
             },
           };
-          const variantName = 'picked-variant';
-          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
-          renderer.render(<VariantComponent variantName={variantName} />);
+          const expected = config.innerComponents;
+          expected.ArticleBody = 'component-found-here';
+
+          const VariantComponent = createVariant(config.innerComponents, config.defaultVariant)(ComposedComponent);
+          renderer.render(<VariantComponent />);
           const renderOutput = renderer.getRenderOutput();
-          renderOutput.type.should.equal(ComposedComponent);
-          renderOutput.props.components.should.deep.equal(config.variants[variantName]);
-        });
-
-      });
-
-      describe('with no components in composed component\'s defaultProps and matching default', () => {
-
-        it('should pass in the default variantNameComponents object', () => {
-          class ComposedComponent extends React.Component {
-            render() {
-              return <div>Hello there <span>fellow developer</span>.</div>;
-            }
-          }
-
-          const config = {
-            defaultVariant: 'default-variant',
-            variants: {
-              'default-variant': {
-                'ArticleHeader': 'component-goes-here',
-              },
-            },
-          };
-          const VariantComponent = withVariedInnerComponents(config)(ComposedComponent);
-          renderer.render(<VariantComponent variantName="does-not-match" />);
-          const renderOutput = renderer.getRenderOutput();
-          renderOutput.type.should.equal(ComposedComponent);
-          renderOutput.props.components.should.deep.equal(config.variants[config.defaultVariant]);
+          renderOutput.type.name.should.equal('WithVariantClassNameListComponent');
+          renderOutput.props.components.should.deep.equal(expected);
         });
 
       });
@@ -186,13 +162,12 @@ describe('variantify', () => {
         }
         const config = {
           defaultVariant: 'variant-a',
-          availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
         };
 
         const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
         renderer.render(<VariantComponent variantName="variant-a" />);
         const renderOutput = renderer.getRenderOutput();
-        renderOutput.type.should.equal(ComposedComponent);
+        renderOutput.type.name.should.equal('ComposedComponent');
         renderOutput.props.generateClassNameList.should.be.a('function');
       });
 
@@ -206,7 +181,6 @@ describe('variantify', () => {
           }
           const config = {
             defaultVariant: 'variant-a',
-            availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
           };
 
           const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
@@ -224,7 +198,6 @@ describe('variantify', () => {
           }
           const config = {
             defaultVariant: 'variant-a',
-            availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
           };
 
           const VariantComponent = withVariantClassNameList(config)(ComposedComponent);
@@ -242,7 +215,6 @@ describe('variantify', () => {
           }
           const config = {
             defaultVariant: null,
-            availableVariants: [ 'variant-a', 'variant-b', 'variant-c' ],
           };
 
           const VariantComponent = withVariantClassNameList(config)(ComposedComponent);

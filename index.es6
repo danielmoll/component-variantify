@@ -1,35 +1,13 @@
 import React, { Component, PropTypes } from 'react';
-import compose from 'lodash.compose';
 
 export const defaultGenerateClassNameList = (defaultClassName) => [ defaultClassName ];
 
-export function withVariedInnerComponents({ variants = {}, defaultVariant }) {
-  return (ComposedComponent) => class WithVariedInnerComponents extends Component {
-    render() {
-      const { variantName, ...remainingProps } = this.props;
-      // If variant-specific omponents were found then passthrough,
-      // otherwise just pass the remainingProps and variantName.
-      const components = Object.assign(
-        (ComposedComponent.defaultProps || {}).components || {},
-        variants[variantName] || variants[defaultVariant] || {}
-      );
-      return (
-        <ComposedComponent
-          variantName={variantName}
-          components={components}
-          {...remainingProps}
-        />
-      );
-    }
-  };
-}
-
-export function withVariantClassNameList({ variantsAvailable = [], defaultVariant }) {
+export function withVariantClassNameList({ defaultVariant }) {
   return (ComposedComponent) => class WithVariantClassNameListComponent extends Component {
 
     static get propTypes() {
       return {
-        variantName: PropTypes.oneOf(variantsAvailable),
+        variantName: PropTypes.string,
       };
     }
 
@@ -63,12 +41,50 @@ export function withVariantClassNameList({ variantsAvailable = [], defaultVarian
   };
 }
 
-export default function variantify(config = {}) {
-  return compose(
-    withVariedInnerComponents(config),
-    withVariantClassNameList({
-      defaultVariant: config.defaultVariant,
-      variantsAvailable: Object.keys(config.variants),
-    })
-  );
+export function createVariant(components = {}, defaultVariant) {
+  return (ComposedComponent) => class VariantComponent extends Component {
+    render() {
+      const VariantStyledComponent = withVariantClassNameList({ defaultVariant })(ComposedComponent);
+      // If variant-specific components were found then passthrough,
+      // otherwise just pass the remainingProps and variantName.
+      const overriddenComponents = Object.assign(
+        (ComposedComponent.defaultProps || {}).components || {},
+        components
+      );
+      return (
+        <VariantStyledComponent
+          components={overriddenComponents}
+          {...this.props}
+        />
+      );
+    }
+  };
+}
+
+export function withSwitchableInnerComponents({ variants = {}, defaultVariant }) {
+  const variantsAvailable = Object.keys(variants);
+  return (ComposedComponent) => class VariantSwitcherComponent extends Component {
+
+    static get propTypes() {
+      return {
+        variantName: PropTypes.oneOf(variantsAvailable),
+      };
+    }
+
+    render() {
+      const { variantName, ...remainingProps } = this.props;
+      const components = variants[variantName] || variants[defaultVariant] || {};
+      const VariantComponent = createVariant(components, defaultVariant)(ComposedComponent);
+      return (
+        <VariantComponent
+          variantName={variantName}
+          {...remainingProps}
+        />
+      );
+    }
+  };
+}
+
+export default function createVariantSwitcher(config = {}) {
+  return withSwitchableInnerComponents(config);
 }
