@@ -1,5 +1,5 @@
 {
-  "name": "component-variantify",
+  "name": "@economist/component-variantify",
   "version": "1.0.1",
   "description": "HOCs to help create variants of components",
   "author": "The Economist (http://economist.com)",
