@@ -40,12 +40,13 @@ A function `createVariant` is provided that will:
 1. Prefix the class name of the component it wraps
 2. Alter the inner components of the component it wraps
 
-There is also another function exposed by default: `createVariantSwitcher`.
-When using this `variantName` can be passed in as a `prop` to affect the inner components that are passed into the `Component` it wraps. Like so:
+By default, the function `createVariantSwitcher` is exposed. When using this `variantName` can be passed in within `props` to affect the inner components that are passed into the `Component` it wraps. Like so:
 
 `<VariantComponentSwitcher variantName="look-or-feel-id" />`.
 
-#### NOTES
+__________
+
+###### NOTES
 
 `createVariantSwitcher` wraps a component with `withSwitchableInnerComponents`
 
