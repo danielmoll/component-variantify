@@ -1,5 +1,30 @@
 import React, { Component, PropTypes } from 'react';
 
+function giveDisplayName(ComposedComponent, extraData) {
+  function getDisplayName(comp) {
+    return comp.displayName || comp.name;
+  }
+  function stringify(data) {
+    return JSON.stringify(data, (key, value) => { // eslint-disable-line id-match
+      if (typeof value === 'function') {
+        return getDisplayName(value);
+      }
+      return value;
+    }, ' ');
+  }
+  return (WrappingComponent) => {
+    const composedComponentName = getDisplayName(ComposedComponent);
+    const wrappingComponentName = getDisplayName(WrappingComponent);
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (extraData && !isProduction) {
+      WrappingComponent.displayName = `${wrappingComponentName}(${composedComponentName} with ${stringify(extraData)})`;
+    } else {
+      WrappingComponent.displayName = `${wrappingComponentName}(${composedComponentName})`;
+    }
+    return WrappingComponent;
+  };
+}
+
 export const defaultGenerateClassNameList = (defaultClassName) => [ defaultClassName ];
 
 export function withVariantClassNameList({ defaultVariant }) {
@@ -42,22 +67,26 @@ export function withVariantClassNameList({ defaultVariant }) {
 }
 
 export function createVariant(components = {}, defaultVariant) {
-  return (ComposedComponent) => class VariantComponent extends Component {
-    render() {
-      const VariantStyledComponent = withVariantClassNameList({ defaultVariant })(ComposedComponent);
-      // If variant-specific components were found then passthrough,
-      // otherwise just pass the remainingProps and variantName.
-      const overriddenComponents = Object.assign(
-        (ComposedComponent.defaultProps || {}).components || {},
-        components
-      );
-      return (
-        <VariantStyledComponent
-          components={overriddenComponents}
-          {...this.props}
-        />
-      );
+  return (ComposedComponent) => {
+    class Variant extends Component {
+      render() {
+        const VariantStyledComponent = withVariantClassNameList({ defaultVariant })(ComposedComponent);
+        // If variant-specific components were found then passthrough,
+        // otherwise just pass the remainingProps and variantName.
+        const overriddenComponents = Object.assign(
+          (ComposedComponent.defaultProps || {}).components || {},
+          components
+        );
+        return (
+          <VariantStyledComponent
+            components={overriddenComponents}
+            {...this.props}
+          />
+        );
+      }
     }
+
+    return giveDisplayName(ComposedComponent, { components, defaultVariant })(Variant);
   };
 }
 
