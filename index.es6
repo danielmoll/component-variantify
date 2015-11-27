@@ -5,7 +5,7 @@ function giveDisplayName(ComposedComponent, extraData) {
     return comp.displayName || comp.name;
   }
   function stringify(data) {
-    return JSON.stringify(data, (key, value) => { // eslint-disable-line id-match
+    return JSON.stringify(data, (key, value) => {
       if (typeof value === 'function') {
         return getDisplayName(value);
       }
