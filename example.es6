@@ -35,24 +35,31 @@ class ComposedComponent extends React.Component {
 
 }
 
+function BasicInformation({ title, director }) {
+  return (
+    <div>
+      <h1>{title} by {director}</h1>
+    </div>
+  );
+}
+function ExtendedInformation({ title, director, synopsis, rating }) {
+  return (
+    <ul>
+      <li><strong>{title}</strong> ({rating})</li>
+      <li>Director: {director}</li>
+      <li>Synopsis: {synopsis}</li>
+    </ul>
+  );
+}
+
 const config = {
   defaultVariant: 'basic',
   variants: {
     'basic': {
-      'Information': ({ title, director }) => (
-        <div>
-          <h1>{title} by {director}</h1>
-        </div>
-      ),
+      'Information': BasicInformation,
     },
     'extended': {
-      'Information': ({ title, director, synopsis, rating }) => (
-        <ul>
-          <li><strong>{title}</strong> ({rating})</li>
-          <li>Director: {director}</li>
-          <li>Synopsis: {synopsis}</li>
-        </ul>
-      ),
+      'Information': ExtendedInformation,
     },
   },
 };
